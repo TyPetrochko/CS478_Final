@@ -1,5 +1,5 @@
 var speed = 250.0;
-var safetyBuffer = 200.0;
+var safetyBuffer = 1000.0;
 var debrisLength = 500.0;
 var debrisWidth = 300.0;
 var numObstacles = 100;
@@ -7,7 +7,7 @@ var dt = 10;
 var debrisMin = Y_MIN - 50;
 var debrisMax = Y_MAX + 50;
 var dayLength = 60000;
-var debrisSizeMax = 10.0;
+var debrisSizeMax = 20.0;
 var debrisSizeMin = 3.0;
 
 var numTiles = 25;
@@ -17,6 +17,7 @@ var smoothingFactor = 10.0;
 var resolution = 0.12;
 
 var ROCK_COLOR = [150.0/255.0, 65/255.0, 65.0/255.0];
+var SHIP_RADIUS = 3;
 
 var Objects = {
   cubes : [],
@@ -38,9 +39,9 @@ var Objects = {
       if(cube[2] > 3) {
         cube[0] = POSITION[0] + 2*(Math.random() - 0.5)*debrisWidth;
         cube[1] = debrisMin + (debrisMax - debrisMin)*Math.random();
-        cube[2] = -safetyBuffer - debrisLength + debrisLength*Math.random();
+        cube[2] = -safetyBuffer*0.5 - debrisLength + debrisLength*Math.random();
       }
-      if(distance(cube, POSITION) < Objects.cubes[i].scale*2) {
+      if(distance(cube, POSITION) - Objects.cubes[i].scale < SHIP_RADIUS) {
         speed = 0.0;
         gameOver();
       }
@@ -55,7 +56,7 @@ var Objects = {
         sphere[1] = debrisMin + (debrisMax - debrisMin)*Math.random();
         sphere[2] = -safetyBuffer - debrisLength + debrisLength*Math.random();
       }
-      if(distance(sphere, POSITION) < Objects.spheres[i].scale) {
+      if(distance(sphere, POSITION) - Objects.spheres[i].scale < SHIP_RADIUS) {
         speed = 0.0;
         gameOver();
       }
@@ -277,6 +278,10 @@ function updateScore(){
     return;
   score += 1.0;
   document.getElementById("score").innerText= "Score "+score;
+}
+
+function getFocus() {
+  document.getElementById("nvmc-canvas").focus();
 }
 
 setInterval(Objects.update, dt);
