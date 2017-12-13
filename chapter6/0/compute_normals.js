@@ -19,7 +19,7 @@ function ComputeNormals(obj) {
 	obj.vertex_normal = new Float32Array(nv*3);
 	var star_size = new Float32Array(nv);
 	
-	for( var i = 0 ; i  < nv; ++i){
+	for(var i = 0 ; i  < nv; ++i){
 		star_size[i] = 0;
 		obj.vertex_normal[3*i] = 0.0;
 		obj.vertex_normal[3*i+1] = 0.0;

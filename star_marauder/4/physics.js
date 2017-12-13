@@ -1,8 +1,11 @@
 // Max y-position
-var Y_MAX = 20.0;
+var Y_MAX = 100.0;
 var Y_MIN = 5.0;
 var DAMP = 10.0;
 var POSITION = [0.0, 0.0, 0.0];
+var STEER_SPEED = 5.0;
+var TILT = 0.0;
+var PERSPECTIVE_WARP = 0.001;
 
 var NVMC = NVMC || { };
 
@@ -265,13 +268,15 @@ NVMC.Player.prototype = {
       upwardForceAmount += f;
 		if (this._input._brake)
       upwardForceAmount -= b;
+    upwardForceAmount *= STEER_SPEED;
 		
     var steerForceAmount = 0.0;
 		if (this._input._steerRight)
       steerForceAmount += f;
 		if (this._input._steerLeft)
       steerForceAmount -= b;
-
+    steerForceAmount *= STEER_SPEED;
+    
     if(state._position[1] > Y_MAX) {
       upwardForceAmount = (Y_MAX - state._position[1]) * DAMP;
     } else if (state._position[1] < Y_MIN) {
@@ -309,6 +314,8 @@ NVMC.Player.prototype = {
 		var z_axis = SpiderGL.Math.Mat4.mul4(SpiderGL.Math.Mat4.rotationAngleAxis(state._orientation, [0, 1, 0,0]),[0,0,1,0]);
 		z_axis = [ z_axis[0], z_axis[1],z_axis[2]];
 		var x_axis = SpiderGL.Math.Vec3.cross([0, 1, 0], z_axis);
+    x_axis[1] += state._linearVelocity[0]*PERSPECTIVE_WARP;
+    TILT = state.linearVelocity[0];
 		state._frame = [	-x_axis[0],		-x_axis[1],			-x_axis[2]		,0.0,
 											0.0,		1.0,			0.0		,0.0,
 											-z_axis[0],	-z_axis[1],			-z_axis[2]		,0.0,

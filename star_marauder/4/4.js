@@ -1,6 +1,11 @@
 // Global NVMC Client
 // ID 7.4
+//
 
+var SHIP_COLOR = [0.15,0.05,0.05];
+var TILT_MODIFIER = 0.006;
+var COLLISION_ROOM = 0.5;
+var DIRT_COLOR = [.347, .257, .257, 1]
 /***********************************************************************/
 var NVMCClient = NVMCClient || {};
 /***********************************************************************/
@@ -120,7 +125,7 @@ NVMCClient.drawCar = function (gl){
 					"CUBE_MAP"            : 2,
 					"VIEW_TO_WORLD_MATRIX": this.viewFrame,
 					"LIGHTS_GEOMETRY":		this.sunLightDirectionViewSpace,
-					"LIGHT_COLOR":	[0.6,0.6,0.6]
+					"LIGHT_COLOR": SHIP_COLOR
 		});
    
    	this.sgl_renderer.setPrimitiveMode("FILL");
@@ -164,30 +169,11 @@ NVMCClient.drawEverything = function (gl,excludeCar) {
 	var pos  = this.game.state.players.me.dynamicState.position;	
 	
 	// Setup projection matrix
-	gl.useProgram(this.uniformShader);
-	gl.uniformMatrix4fv(this.uniformShader.uProjectionMatrixLocation, false, this.projectionMatrix);
-	
-	gl.useProgram(this.phongShader);
-	gl.uniformMatrix4fv(this.phongShader.uProjectionMatrixLocation,false,this.projectionMatrix);
-	gl.uniformMatrix4fv(this.phongShader.uModelViewMatrixLocation,false,stack.matrix  );
-	gl.uniformMatrix3fv(this.phongShader.uViewSpaceNormalMatrixLocation,false, SglMat4.to33(this.stack.matrix) );	
-	gl.uniform4fv(this.phongShader.uLightDirectionLocation,this.sunLightDirectionViewSpace);
-	
-	gl.uniform3fv(this.phongShader.uLightColorLocation,[0.9,0.9,0.9]);
-	gl.uniform1f(this.phongShader.uShininessLocation,0.2);
-	gl.uniform1f(this.phongShader.uKaLocation,0.5);
-	gl.uniform1f(this.phongShader.uKdLocation,0.5);
-	gl.uniform1f(this.phongShader.uKsLocation, 1.0);
-  
-  for (var i = 0; i < Objects.cubes.length; i++) {
-    this.drawCube(gl, this.phongShader, Objects.cubes[i], [1, 1, 1], [1, 1, 1, 1]);
-  }
- 
 	gl.useProgram(this.lambertianSingleColorShader);
 	gl.uniformMatrix4fv(this.lambertianSingleColorShader.uProjectionMatrixLocation,false,this.projectionMatrix);
 	gl.uniform4fv(this.lambertianSingleColorShader.uLightDirectionLocation,this.sunLightDirectionViewSpace);
 	gl.uniform3fv(this.lambertianSingleColorShader.uLightColorLocation,[1.0,1.0,1.0]);
-	var trees = this.game.race.trees;
+	// var trees = this.game.race.trees;
 	// for (var t in trees) {
 	// 	stack.push();
 	// 		var M_8 = SglMat4.translation(trees[t].position);
@@ -195,6 +181,33 @@ NVMCClient.drawEverything = function (gl,excludeCar) {
 	// 		this.drawTree(gl,this.lambertianSingleColorShader);
 	// 	stack.pop();
 	// }
+  
+  for (var i = 0; i < Objects.cubes.length; i++) {
+    var cube = Objects.cubes[i];
+    this.drawCube(gl, this.lambertianSingleColorShader,
+        cube.position, [cube.scale, cube.scale, cube.scale], cube.color);
+  }
+  
+  for (var i = 0; i < Objects.spheres.length; i++) {
+    var sphere = Objects.spheres[i];
+    this.drawSphere(gl, this.lambertianSingleColorShader,
+        sphere.position, [sphere.scale, sphere.scale, sphere.scale], sphere.color);
+  }
+
+  for (var i = 0; i < Objects.surfaces.length; i++) {
+    for (var j = 0; j < Objects.surfaces[i].length; j++){
+      var obj = Objects.surfaces[i][j];
+      this.drawSurface(obj.index[0], obj.index[1], gl, this.lambertianSingleColorShader, 
+          obj.position, [1, 1, 1], DIRT_COLOR);
+
+      if((POSITION[0] != 0 || POSITION[1] != 0 || POSITION[2] != 0)
+          && this.surfaces[obj.index[0]][obj.index[1]].ycollider - POSITION[1] > COLLISION_ROOM) {
+        console.log("GROUND COLLISION: "+POSITION);
+        speed = 0.0;
+      }
+    }
+  }
+  // this.drawSurface(0, 1, gl, this.lambertianSingleColorShader, Objects.surfaces[0][1], [1, 1, 1], [1, 1, 1, 1]);
 
   this.sunLightDirection = getSunlightAngle();
 
@@ -204,9 +217,9 @@ NVMCClient.drawEverything = function (gl,excludeCar) {
 	gl.uniformMatrix4fv(this.textureShader.uProjectionMatrixLocation, false, this.projectionMatrix);
 	gl.uniformMatrix4fv(this.textureShader.uModelViewMatrixLocation, false, stack.matrix);
 	gl.uniform1i(this.textureShader.uTextureLocation, 0);
-	this.drawObject(gl,this.ground,this.textureShader,[0.3, 0.7, 0.2,1.0], [0, 0, 0,1.0]);
-    gl.bindTexture(gl.TEXTURE_2D, this.texture_street);
-    this.drawObject(gl, this.track, this.textureShader, [0.9, 0.8, 0.7, 1.0], [0, 0, 0, 1.0]);
+	// this.drawObject(gl,this.ground,this.textureShader,[0.3, 0.7, 0.2,1.0], [0, 0, 0,1.0]);
+  //   gl.bindTexture(gl.TEXTURE_2D, this.texture_street);
+  //   this.drawObject(gl, this.track, this.textureShader, [0.9, 0.8, 0.7, 1.0], [0, 0, 0, 1.0]);
 
   // for (var i in this.buildings) {
  	// 	gl.bindTexture(gl.TEXTURE_2D, this.texture_facade[i%this.texture_facade.length]);
@@ -223,7 +236,7 @@ NVMCClient.drawEverything = function (gl,excludeCar) {
 			var M_9 = SglMat4.translation(pos);
 			stack.multiply(M_9);
 
-			var M_9bis = SglMat4.rotationAngleAxis(this.game.state.players.me.dynamicState.orientation, [0, 1, 0]);
+			var M_9bis = SglMat4.rotationAngleAxis(this.game.state.players.me.dynamicState.orientation, [Math.sin(TILT*TILT_MODIFIER), Math.cos(TILT*TILT_MODIFIER), 0]);
 			stack.multiply(M_9bis);
 
 			this.drawCar(gl);
@@ -370,7 +383,6 @@ NVMCClient.onInitialize = function () {
 	this.perVertexColorShader 		    = new perVertexColorShader(gl);
 	this.lambertianSingleColorShader 	= new lambertianSingleColorShader(gl);
 	this.phongShader 			        = new phongShader(gl);
-	this.phongSingleColorShader 	= new phongSingleColorShader(gl);
 	this.textureShader 			        = new textureShader(gl);
 	this.skyBoxShader 			        = new skyBoxShader(gl);
 	this.reflectionMapShader 	        = new reflectionMapShader(gl);
@@ -390,15 +402,21 @@ NVMCClient.onInitialize = function () {
         // NVMC.resource_path+'textures/cubemap/posx.jpg',
         // NVMC.resource_path+'textures/cubemap/negx.jpg',
         // NVMC.resource_path+'textures/cubemap/posy.jpg',
-        NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_right.png',
-        NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_left.png',
-        NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_top.png',
+        // NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_right.png',
+        // NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_left.png',
+        // NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_top.png',
+        NVMC.resource_path+'textures/cubemap/bkg/red/bkg2_right1.png',
+        NVMC.resource_path+'textures/cubemap/bkg/red/bkg2_left2.png',
+        NVMC.resource_path+'textures/cubemap/bkg/red/bkg2_top3.png',
         // NVMC.resource_path+'textures/cubemap/negy.jpg',
         // NVMC.resource_path+'textures/cubemap/posz.jpg',
         // NVMC.resource_path+'textures/cubemap/negz.jpg'
-        NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_bot.png',
-        NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_front.png',
-        NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_back.png'
+        // NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_bot.png',
+        // NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_front.png',
+        // NVMC.resource_path+'textures/cubemap/bkg/blue/bkg1_back.png'
+        NVMC.resource_path+'textures/cubemap/bkg/red/bkg2_bottom4.png',
+        NVMC.resource_path+'textures/cubemap/bkg/red/bkg2_front5.png',
+        NVMC.resource_path+'textures/cubemap/bkg/red/bkg2_back6.png'
     );
 
 

@@ -177,6 +177,19 @@ NVMCClient.createObjects = function () {
   this.cube = new Cube(10);
   this.cylinder = new Cylinder(10);
   this.cone = new Cone(10);
+  this.sphere = new Sphere(10);
+
+  var controlPoints = [];
+  for(var i = 0; i < 4; i++) {
+    controlPoints.push([
+      Math.random()*9,
+      Math.random()*9,
+      Math.random()*9,
+      Math.random()*9
+    ]);
+  }
+  
+  this.surfaces = Objects.generateTiles();
 
   this.track = new TexturedTrack(this.game.race.track, 0.2);
 
@@ -203,10 +216,22 @@ NVMCClient.createBuffers = function (gl) {
   
   ComputeNormals(this.cube);
   this.createObjectBuffers(gl, this.cube, false, true, false);
-
+  
+  ComputeNormals(this.sphere);
+  this.createObjectBuffers(gl, this.sphere, false, true, false);
+  
   ComputeNormals(this.cone);
   this.createObjectBuffers(gl, this.cone, false, true, false);
- 
+
+  for(var i = 0; i < this.surfaces.length; i++) {
+    for(var j = 0; j < this.surfaces[i].length; j++) {
+      ComputeNormals(this.surfaces[i][j]);
+      this.createObjectBuffers(gl, this.surfaces[i][j], false, true, false);
+    }
+  }
+  
+  ComputeNormals(this.cone);
+  this.createObjectBuffers(gl, this.cone, false, true, false);
 
   this.createObjectBuffers(gl, this.track, false, false, true);
   this.createObjectBuffers(gl, this.ground, false, false, true);

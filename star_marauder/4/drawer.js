@@ -8,14 +8,19 @@ NVMCClient.sgl_renderer = null;
 
 NVMCClient.sunLightDirection = SglVec4.normalize([1, -0.5, 0, 0,0.0]);
 
-var print = true;
 NVMCClient.drawCube = function (gl, shaderToUse, position, scale, color) {
-  if(print){
-    print = false;
-    console.log(this.cone);
-    console.log(this.cylinder);
-    console.log(this.cube);
-  }
+  this.drawPrimitive(this.cube, gl, shaderToUse, position, scale, color);
+};
+
+NVMCClient.drawSphere = function (gl, shaderToUse, position, scale, color) {
+  this.drawPrimitive(this.sphere, gl, shaderToUse, position, scale, color);
+};
+
+NVMCClient.drawSurface = function (i, j, gl, shaderToUse, position, scale, color) {
+  this.drawPrimitive(this.surfaces[i][j], gl, shaderToUse, position, scale, color);
+};
+
+NVMCClient.drawPrimitive = function (primitive, gl, shaderToUse, position, scale, color) {
   stack = this.stack;
 
 	stack.push();
@@ -29,7 +34,7 @@ NVMCClient.drawCube = function (gl, shaderToUse, position, scale, color) {
 	var InvT = SglMat4.inverse(this.stack.matrix)
 	InvT = SglMat4.transpose(InvT);
 	gl.uniformMatrix3fv(shaderToUse.uViewSpaceNormalMatrixLocation, false, SglMat4.to33(InvT));
-	this.drawObject(gl, this.cube, shaderToUse, color);
+	this.drawObject(gl, primitive, shaderToUse, color);
 	stack.pop();
 };
 
