@@ -1,7 +1,7 @@
-var speed = 100.0;
+var speed = 250.0;
 var safetyBuffer = 200.0;
-var debrisLength = 300.0;
-var debrisWidth = 200.0;
+var debrisLength = 500.0;
+var debrisWidth = 300.0;
 var numObstacles = 100;
 var dt = 10;
 var debrisMin = Y_MIN - 50;
@@ -10,11 +10,11 @@ var dayLength = 60000;
 var debrisSizeMax = 10.0;
 var debrisSizeMin = 3.0;
 
-var numTiles = 20;
-var tileWidth = 15;
+var numTiles = 25;
+var tileWidth = 30;
 var hillHeight = 10;
 var smoothingFactor = 10.0;
-var resolution = 0.08;
+var resolution = 0.12;
 
 var ROCK_COLOR = [150.0/255.0, 65/255.0, 65.0/255.0];
 
@@ -24,6 +24,8 @@ var Objects = {
   surfaces : [],
   
   update : function (){
+    if(gameComplete)
+      return;
     if (Objects.cubes.length == 0) {
       Objects.init();
     }
@@ -38,9 +40,9 @@ var Objects = {
         cube[1] = debrisMin + (debrisMax - debrisMin)*Math.random();
         cube[2] = -safetyBuffer - debrisLength + debrisLength*Math.random();
       }
-      if(distance(cube, POSITION) < Objects.cubes[i].scale) {
+      if(distance(cube, POSITION) < Objects.cubes[i].scale*2) {
         speed = 0.0;
-        console.log("COLLISION!");
+        gameOver();
       }
     }
 
@@ -55,7 +57,7 @@ var Objects = {
       }
       if(distance(sphere, POSITION) < Objects.spheres[i].scale) {
         speed = 0.0;
-        console.log("COLLISION!");
+        gameOver();
       }
     }
 
@@ -241,9 +243,42 @@ function getTime() {
   return n;
 }
 
+var taunts = [
+  "Looks like you got riggity rek'ed!",
+  "Try again! Maybe you'll do better",
+  "Next time's a charm!",
+  "Ouch.",
+  "Ouch. I bet that hurt.",
+  "Ouch. I wouldn't want to be you.",
+  "Just a flesh wound.",
+  "That'll leave a mark.",
+  "Is that all you got?",
+  "Get back up there champ!",
+  "Hey, Rome wasn't built in a day.",
+];
+
+var gameComplete = false;
+function gameOver() {
+  console.log("Game over?");
+  document.getElementById("play_again").innerText = "Play again?";
+  var canv = document.getElementById("nvmc-canvas");
+  canv.parentNode.removeChild(canv);
+  document.getElementById("taunt").innerText = taunts[Math.floor(Math.random() * taunts.length)]; 
+  gameComplete = true;
+}
+
 function distance(a, b){
   return Math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2 + (a[2]-b[2])**2);
 }
+    
+var score = 0.0;
+function updateScore(){
+  if(gameComplete)
+    return;
+  score += 1.0;
+  document.getElementById("score").innerText= "Score "+score;
+}
 
 setInterval(Objects.update, dt);
+setInterval(updateScore, 1000);
 

@@ -4,6 +4,7 @@
 
 var SHIP_COLOR = [0.15,0.05,0.05];
 var TILT_MODIFIER = 0.006;
+var YAW_MODIFIER = 0.003;
 var COLLISION_ROOM = 0.5;
 var DIRT_COLOR = [.347, .257, .257, 1]
 /***********************************************************************/
@@ -202,7 +203,7 @@ NVMCClient.drawEverything = function (gl,excludeCar) {
 
       if((POSITION[0] != 0 || POSITION[1] != 0 || POSITION[2] != 0)
           && this.surfaces[obj.index[0]][obj.index[1]].ycollider - POSITION[1] > COLLISION_ROOM) {
-        console.log("GROUND COLLISION: "+POSITION);
+        gameOver();
         speed = 0.0;
       }
     }
@@ -236,7 +237,14 @@ NVMCClient.drawEverything = function (gl,excludeCar) {
 			var M_9 = SglMat4.translation(pos);
 			stack.multiply(M_9);
 
-			var M_9bis = SglMat4.rotationAngleAxis(this.game.state.players.me.dynamicState.orientation, [Math.sin(TILT*TILT_MODIFIER), Math.cos(TILT*TILT_MODIFIER), 0]);
+			// var M_9bis = SglMat4.rotationAngleAxis(
+      //     this.game.state.players.me.dynamicState.orientation, 
+      //     [Math.sin(TILT*TILT_MODIFIER), Math.cos(TILT*TILT_MODIFIER), 0]);
+			var M_9bis = SglMat4.rotationAngleAxis(
+          this.game.state.players.me.dynamicState.orientation, 
+          [Math.sin(TILT*TILT_MODIFIER),
+          Math.cos(TILT*TILT_MODIFIER) + Math.cos(YAW*YAW_MODIFIER),
+          Math.sin(YAW*YAW_MODIFIER)]);
 			stack.multiply(M_9bis);
 
 			this.drawCar(gl);

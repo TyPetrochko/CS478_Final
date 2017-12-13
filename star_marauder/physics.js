@@ -5,6 +5,7 @@ var DAMP = 10.0;
 var POSITION = [0.0, 0.0, 0.0];
 var STEER_SPEED = 5.0;
 var TILT = 0.0;
+var YAW = 0.0;
 var PERSPECTIVE_WARP = 0.001;
 
 var NVMC = NVMC || { };
@@ -316,6 +317,7 @@ NVMC.Player.prototype = {
 		var x_axis = SpiderGL.Math.Vec3.cross([0, 1, 0], z_axis);
     x_axis[1] += state._linearVelocity[0]*PERSPECTIVE_WARP;
     TILT = state.linearVelocity[0];
+    YAW = state.linearVelocity[1];
 		state._frame = [	-x_axis[0],		-x_axis[1],			-x_axis[2]		,0.0,
 											0.0,		1.0,			0.0		,0.0,
 											-z_axis[0],	-z_axis[1],			-z_axis[2]		,0.0,
