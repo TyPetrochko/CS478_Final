@@ -191,22 +191,11 @@ NVMCClient.createObjects = function () {
   
   this.surfaces = Objects.generateTiles();
 
-  this.track = new TexturedTrack(this.game.race.track, 0.2);
-
   var bbox = this.game.race.bbox;
   var quad = [bbox[0], bbox[1] - 0.01, bbox[2], bbox[3], bbox[1] - 0.01, bbox[2], bbox[3], bbox[1] - 0.01, bbox[5], bbox[0], bbox[1] - 0.01, bbox[5]];
   var text_coords = [-200, -200, 200, -200, 200, 200, -200, 200];
-  this.ground = new TexturedQuadrilateral(quad, text_coords);
-  this.cabin = new CabinNoMirror();
-  this.windshield = new Windshield();
-  this.rearMirror = new RearMirror();
 
   var gameBuildings = this.game.race.buildings;
-  this.buildings = new Array(gameBuildings.length);
-  for (var i = 0; i < gameBuildings.length; ++i) {
-    this.buildings[i] = new TexturedFacades(gameBuildings[i], 1);
-    this.buildings[i].roof = new TexturedRoof(gameBuildings[i], 5);
-  }
 };
 
 NVMCClient.createBuffers = function (gl) {
@@ -233,18 +222,6 @@ NVMCClient.createBuffers = function (gl) {
   ComputeNormals(this.cone);
   this.createObjectBuffers(gl, this.cone, false, true, false);
 
-  this.createObjectBuffers(gl, this.track, false, false, true);
-  this.createObjectBuffers(gl, this.ground, false, false, true);
-
-  this.createObjectBuffers(gl, this.cabin, true, false, false);
-  this.createObjectBuffers(gl, this.windshield, true, false, false);
-
-  this.createObjectBuffers(gl, this.rearMirror, false, false, true);
-
-  for (var i = 0; i < this.buildings.length; ++i) {
-    this.createObjectBuffers(gl, this.buildings[i], false, false, true);
-    this.createObjectBuffers(gl, this.buildings[i].roof, false, false, true);
-  }
 };
 
 NVMCClient.initializeObjects = function (gl) {
