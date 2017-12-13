@@ -290,23 +290,7 @@ NVMCClient.drawScene = function (gl) {
 	gl.enable(gl.DEPTH_TEST);
 	
 
- 	if( this.currentCamera==3 ){
-	 		gl.useProgram(this.perVertexColorShader);
-			gl.enable(gl.STENCIL_TEST);
-			gl.clearStencil(0);
-			gl.stencilMask(~0);
-			gl.stencilFunc(gl.ALWAYS,1,0xFF);
-			gl.stencilOp(gl.REPLACE,gl.REPLACE,gl.REPLACE);
-		
-			gl.uniformMatrix4fv(this.perVertexColorShader.uModelViewMatrixLocation, false, SglMat4.identity());
-			gl.uniformMatrix4fv(this.perVertexColorShader.uProjectionMatrixLocation, false, SglMat4.identity());
-			this.drawObject(gl, this.cabin,this.perVertexColorShader, [0.4, 0.8, 0.9,1.0]);
-		
-			gl.stencilFunc(gl.GREATER,1,0xFF);
-			gl.stencilOp(gl.KEEP,gl.KEEP,gl.KEEP);
-			gl.stencilMask(0);
-	}else
-		gl.disable(gl.STENCIL_TEST);
+  gl.disable(gl.STENCIL_TEST);
 	
 	 
 	this.drawEverything(gl);
@@ -336,14 +320,6 @@ NVMCClient.drawScene = function (gl) {
 		gl.uniformMatrix4fv(this.textureShader.uProjectionMatrixLocation, false, SglMat4.identity());
 		this.drawObject( gl, this.rearMirror, this.textureShader,[1.0,1.0,1.0,1.0],[1.0,1.0,1.0,1.0]);
 		
-		gl.useProgram(this.perVertexColorShader);
-		gl.enable(gl.BLEND);
-		gl.blendFunc( gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-		gl.useProgram(this.perVertexColorShader);
-		gl.uniformMatrix4fv(this.perVertexColorShader.uModelViewMatrixLocation, false, SglMat4.identity());
-		gl.uniformMatrix4fv(this.perVertexColorShader.uProjectionLocation, false, SglMat4.identity());
-		this.drawObject(gl, this.windshield, this.perVertexColorShader);
-		gl.disable(gl.BLEND);
 	}  
 	
 };
@@ -379,8 +355,6 @@ NVMCClient.onInitialize = function () {
 	this.initializeObjects(gl);
 	this.initializeCameras();
 
-	this.uniformShader 			        = new uniformShader(gl);
-	this.perVertexColorShader 		    = new perVertexColorShader(gl);
 	this.lambertianSingleColorShader 	= new lambertianSingleColorShader(gl);
 	this.phongShader 			        = new phongShader(gl);
 	this.textureShader 			        = new textureShader(gl);

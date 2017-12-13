@@ -1541,7 +1541,5 @@ NVMC.setupGame = function (options) {
 };
 
 NVMC.log = function (msg) {
-	var textarea = document.getElementById("nvmc-log");
-	textarea.innerHTML += (msg + "\n");
-	textarea.scrollTop = textarea.scrollHeight;;
+  // Do nothing
 };

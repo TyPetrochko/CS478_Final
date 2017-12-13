@@ -214,14 +214,14 @@ NVMCClient.onInitialize = function () {
 };
 
 NVMCClient.onKeyUp = function (keyCode, event) {
-	if (keyCode == "2") {
-		this.nextCamera();
-		return;
-	}
-	if (keyCode == "1") {
-		this.prevCamera();
-		return;
-	}
+	// if (keyCode == "2") {
+	// 	this.nextCamera();
+	// 	return;
+	// }
+	// if (keyCode == "1") {
+	// 	this.prevCamera();
+	// 	return;
+	// }
 
 	if (this.carMotionKey[keyCode])
 		this.carMotionKey[keyCode](false);

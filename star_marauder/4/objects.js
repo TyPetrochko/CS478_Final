@@ -213,11 +213,12 @@ var Objects = {
 
 var timeOfDay = getTime();
 function getSunlightAngle() {
-  var timeElapsed = getTime() - timeOfDay;
-  var timeMS = timeElapsed % dayLength;
-  var timeRel = (timeMS*1.0)/dayLength;
-  var angle = [Math.cos(timeRel*Math.PI*2), Math.sin(timeRel*Math.PI*2), 1.0, 0];
-  return angle;
+  // var timeElapsed = getTime() - timeOfDay;
+  // var timeMS = timeElapsed % dayLength;
+  // var timeRel = (timeMS*1.0)/dayLength;
+  // var angle = [Math.cos(timeRel*Math.PI*2), Math.sin(timeRel*Math.PI*2), 1.0, 0];
+  // return angle;
+  return [0.0, 1.0, 1.0, 0];
 }
 
 // How much time has passed since last calling

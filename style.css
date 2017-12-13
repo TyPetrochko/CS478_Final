@@ -2,8 +2,8 @@ body {
     padding-left: 18em;
     font-family: Georgia, "Times New Roman",
     Times, serif;
-    color: #3333aa;
-    background-color: #eeeeff ;
+    color: darkred;
+    background-color: grey ;
     width: 40em;}
 ul.combar {
     list-style-type: none;
