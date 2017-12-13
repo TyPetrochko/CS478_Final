@@ -9,7 +9,6 @@ NVMCClient.sgl_renderer = null;
 NVMCClient.sunLightDirection = SglVec4.normalize([1, -0.5, 0, 0,0.0]);
 
 NVMCClient.createObjectBuffers = function (gl, obj, createColorBuffer, createNormalBuffer) {
-
 	obj.vertexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, obj.vertexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, obj.vertices, gl.STATIC_DRAW);
@@ -253,7 +252,7 @@ NVMCClient.drawScene = function (gl) {
 		stack.push();
 		var M_8 = SglMat4.translation(trees[t].position);
 		stack.multiply(M_8);
-		this.drawTree(gl, this.lambertianSingleColorShader);
+		this.drawTree(gl, this.uniformShader);
 		stack.pop();
 	}
 

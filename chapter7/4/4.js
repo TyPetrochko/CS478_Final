@@ -365,6 +365,7 @@ NVMCClient.onInitialize = function () {
 	this.perVertexColorShader 		    = new perVertexColorShader(gl);
 	this.lambertianSingleColorShader 	= new lambertianSingleColorShader(gl);
 	this.phongShader 			        = new phongShader(gl);
+	this.phongSingleColorShader 	= new phongSingleColorShader(gl);
 	this.textureShader 			        = new textureShader(gl);
 	this.skyBoxShader 			        = new skyBoxShader(gl);
 	this.reflectionMapShader 	        = new reflectionMapShader(gl);
@@ -393,6 +394,7 @@ NVMCClient.onInitialize = function () {
 	this.createReflectionMap(gl);
 	
 	this.loadCarModel(gl,NVMC.resource_path+"geometry/cars/eclipse/eclipse-white.obj");
+	// this.loadCarModel(gl,NVMC.resource_path+"geometry/cars/eclipse/sphere.obj");
 	this.createTechniqueReflection(gl);
 
 	this.rearMirrorTextureTarget = this.prepareRenderToTextureFrameBuffer(gl);

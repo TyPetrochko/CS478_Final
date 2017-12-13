@@ -1,5 +1,5 @@
 server:
-	python2 -m SimpleHTTPServer 8080
+	python -m SimpleHTTPServer 8080
 
 tunnel:
 	./ngrok http 8080
