@@ -284,6 +284,9 @@ function getFocus() {
   document.getElementById("nvmc-canvas").focus();
 }
 
-setInterval(Objects.update, dt);
-setInterval(updateScore, 1000);
+function beginPlaying() {
+  setInterval(Objects.update, dt);
+  setInterval(updateScore, 1000);
+}
+
 

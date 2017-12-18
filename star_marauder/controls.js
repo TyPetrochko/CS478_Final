@@ -4,6 +4,8 @@
 var NVMCClient = NVMCClient || {};
 /***********************************************************************/
 
+var PLAYING = false;
+
 NVMCClient.myPos = function () {
 	return this.game.state.players.me.dynamicState.position;
 }
@@ -32,6 +34,12 @@ NVMCClient.initMotionKeyHandlers = function () {
 	};
 	carMotionKey["D"] = function (on) {
 		game.playerSteerRight = on;
+	};
+	carMotionKey["1"] = function (on) {
+    if(!PLAYING) {
+      beginPlaying();
+      PLAYING = true;
+    }
 	};
 	this.carMotionKey = carMotionKey;
 };

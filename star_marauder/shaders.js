@@ -223,9 +223,14 @@ void main()    \n\
   vec3 lambert = (uColor.xyz * uLightColor) * NdotL;    \n\
    \n\
   // ambient component     \n\
-  lambert[0] = (lambert[0]+0.3)/2.0; \n\
-  lambert[1] = (lambert[1]+0.3)/2.0; \n\
-  lambert[2] = (lambert[2]+0.3)/2.0; \n\
+  float far = 800.0; \n\
+  float near = 10.0; \n\
+  float fogFactor = (far - abs(vpos[2]))/(far - near); \n\
+  vec3 fogColor = vec3(0.8, 0.5, 0.5); \n\
+  fogFactor = clamp( fogFactor, 0.0, 1.0 ); \n\
+  lambert[0] = (lambert[0]*(fogFactor)+(1.0-fogFactor)*fogColor[0])/2.0; \n\
+  lambert[1] = (lambert[1]*(fogFactor)+(1.0-fogFactor)*fogColor[1])/2.0; \n\
+  lambert[2] = (lambert[2]*(fogFactor)+(1.0-fogFactor)*fogColor[2])/2.0; \n\
   gl_FragColor  = vec4(lambert, 1.0);     \n\
   }  \n\
 ";
